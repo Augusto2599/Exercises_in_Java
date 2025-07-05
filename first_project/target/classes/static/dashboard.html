@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard - Produção</title>
+    <!-- Importando Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #18bc9c;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+
+        .card h2 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+            color: #18bc9c;
+        }
+
+        .card p {
+            font-weight: 600;
+            color: #666;
+        }
+
+        /* Gráfico */
+        #chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+            margin-bottom: 2rem;
+        }
+
+        /* Tabela */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #18bc9c;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f9f7;
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            nav {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav a {
+                margin: 0.25rem 0 0 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Dashboard</h1>
+        <nav>
+            <a href="#">Início</a>
+            <a href="#">Relatórios</a>
+            <a href="#">Configurações</a>
+            <a href="#">Sair</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Cards de estatísticas -->
+        <section class="stats-cards">
+            <div class="card">
+                <h2>1,234</h2>
+                <p>Usuários Ativos</p>
+            </div>
+            <div class="card">
+                <h2>567</h2>
+                <p>Novos Pedidos</p>
+            </div>
+            <div class="card">
+                <h2>89%</h2>
+                <p>Taxa de Retenção</p>
+            </div>
+            <div class="card">
+                <h2>120</h2>
+                <p>Suporte Tickets</p>
+            </div>
+        </section>
+
+        <!-- Gráfico -->
+        <section id="chart-container">
+            <canvas id="salesChart"></canvas>
+        </section>
+
+        <!-- Tabela -->
+        <section>
+            <h2>Últimos Usuários Cadastrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Data de Cadastro</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>João Silva</td>
+                        <td>joao.silva@mail.com</td>
+                        <td>01/07/2025</td>
+                        <td>Ativo</td>
+                    </tr>
+                    <tr>
+                        <td>Maria Oliveira</td>
+                        <td>maria.oliveira@mail.com</td>
+                        <td>28/06/2025</td>
+                        <td>Ativo</td>
+                    </tr>
+                    <tr>
+                        <td>Carlos Santos</td>
+                        <td>carlos.santos@mail.com</td>
+                        <td>25/06/2025</td>
+                        <td>Inativo</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2025 Sua Empresa - Todos os direitos reservados
+    </footer>
+
+    <script>
+        // Configuração do gráfico de vendas mensais
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'],
+                datasets: [{
+                    label: 'Vendas',
+                    data: [1200, 1900, 3000, 2500, 3200, 2700, 3500],
+                    backgroundColor: 'rgba(24, 188, 156, 0.2)',
+                    borderColor: '#18bc9c',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#18bc9c',
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
